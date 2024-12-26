@@ -12,55 +12,95 @@
 
 #include "philo.h"
 
-void	parser_args(t_table *table, int ac, char **av)
+int parser_args(t_table *table, int ac, char **av)
 {
-	int i = 0;
-	if(ac != 5 && ac != 6)
-	{
-		printf("Wrong number of arguments\n");
-		return ;
-	}
+    if (ac != 5 && ac != 6)
+    {
+        printf("Wrong number of arguments\n");
+        return (0);
+    }
 
-	table->philo_nbr = ft_atoi(av[1]);
-	table->time_to_die = ft_atoi(av[2]);
-	table->time_to_eat = ft_atoi(av[3]);
-	table->time_to_sleep = ft_atoi(av[4]);
-	if(ac == 6)
-		table->nbr_limit_meals = ft_atoi(av[5]);
-	else
-		table->nbr_limit_meals = 0;
-	if (table->philo_nbr > 0 && table->time_to_die > 0 && table->time_to_eat > 0 && table->time_to_sleep > 0)
-	{	
-		printf("philo_nbr: %d\n", table->philo_nbr);
-		printf("time_to_die: %d\n", table->time_to_die);
-		printf("time_to_eat: %d\n", table->time_to_eat);
-		printf("time_to_sleep: %d\n", table->time_to_sleep);
-		if (table->nbr_limit_meals > 0)
-			printf("nbr_limit_meals: %d\n", table->nbr_limit_meals);
-	}
+    table->philo_nbr = ft_atoi(av[1]);
+    table->time_to_die = ft_atoi(av[2]);
+    table->time_to_eat = ft_atoi(av[3]);
+    table->time_to_sleep = ft_atoi(av[4]);
+    if (ac == 6)
+        table->nbr_limit_meals = ft_atoi(av[5]);
+    else
+        table->nbr_limit_meals = 0;
+
+    if (table->philo_nbr <= 0 || table->time_to_die <= 0 || 
+        table->time_to_eat <= 0 || table->time_to_sleep <= 0)
+    {
+        printf("Invalid arguments\n");
+        return (0);
+    }
+    return (1);
 }
 
-void	initializing(t_table	*table)
+int initializing(t_table *table)
 {
-	int	i;
+    int i;
+    long start_time;
 
-	i = 0;
-	table->philos = malloc(sizeof(t_philo) * table->philo_nbr);
-	table->forks = malloc(sizeof(t_fork) * table->philo_nbr);
-	while(i < table->philo_nbr)
-	{
-		pthread_mutex_init(&table->forks[i].fork, NULL);
-		table->philos[i].time_to_die = table->time_to_die;
-		table->philos[i].time_to_eat = table->time_to_eat;
-		table->philos[i].time_to_sleep = table->time_to_sleep;
-		table->philos[i].philo_nbr = table->philo_nbr;
-		table->philos[i].forks[i].fork_id = i + 1;
-		table->philos[i].forks[i].using = 0;
-		table->philos[i].i = i + 1;
-		table->philos[i].meals_counter = 0;
-		table->philos[i].full = 0;
-		table->philos[i].last_meal_time = 0;
-		table->philos[i].left_fork = &table->forks[i];
-		i++;
-	}
+    table->someone_died = 0;
+    table->philos = malloc(sizeof(t_philo) * table->philo_nbr);
+    if (!table->philos)
+        return (0);
+
+    table->forks = malloc(sizeof(t_fork) * table->philo_nbr);
+    if (!table->forks)
+    {
+        free(table->philos);
+        return (0);
+    }
+
+    if (pthread_mutex_init(&table->death_mutex, NULL) != 0)
+    {
+        free(table->forks);
+        free(table->philos);
+        return (0);
+    }
+
+    start_time = get_current_time();
+    i = -1;
+    while (++i < table->philo_nbr)
+    {
+        if (pthread_mutex_init(&table->forks[i].fork, NULL) != 0)
+        {
+            while (--i >= 0)
+                pthread_mutex_destroy(&table->forks[i].fork);
+            free(table->forks);
+            free(table->philos);
+            return (0);
+        }
+        table->forks[i].fork_id = i + 1;
+        table->forks[i].using = 0;
+
+        table->philos[i].table = table;
+        table->philos[i].time_to_die = table->time_to_die;
+        table->philos[i].time_to_eat = table->time_to_eat;
+        table->philos[i].time_to_sleep = table->time_to_sleep;
+        table->philos[i].philo_nbr = table->philo_nbr;
+        table->philos[i].i = i + 1;
+        table->philos[i].meals_counter = 0;
+        table->philos[i].full = 0;
+        table->philos[i].last_meal_time = start_time;
+        table->philos[i].left_fork = &table->forks[i];
+        table->philos[i].right_fork = &table->forks[(i + 1) % table->philo_nbr];
+        table->philos[i].current_forks = 0;
+        table->philos[i].nbr_limit_meals = table->nbr_limit_meals;
+        table->philos[i].forks = table->forks;
+        table->philos[i].someone_died = 0;
+
+        if (pthread_mutex_init(&table->philos[i].mutex, NULL) != 0)
+        {
+            while (--i >= 0)
+                pthread_mutex_destroy(&table->philos[i].mutex);
+            free(table->forks);
+            free(table->philos);
+            return (0);
+        }
+    }
+    return (1);
 }

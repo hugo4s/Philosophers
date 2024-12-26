@@ -55,3 +55,37 @@ int	ft_atoi(const char *str)
 	}
 	return (sign * result);
 }
+
+#include "philo.h"
+
+long get_current_time(void)
+{
+    struct timeval current_time;
+    
+    gettimeofday(&current_time, NULL);
+    return ((current_time.tv_sec * 1000) + (current_time.tv_usec / 1000));
+}
+
+void cleanup(t_table *table)
+{
+    int i;
+
+    if (table)
+    {
+        if (table->forks)
+        {
+            for (i = 0; i < table->philo_nbr; i++)
+                pthread_mutex_destroy(&table->forks[i].fork);
+            free(table->forks);
+        }
+        if (table->philos)
+        {
+            for (i = 0; i < table->philo_nbr; i++)
+                pthread_mutex_destroy(&table->philos[i].mutex);
+            free(table->philos);
+        }
+        pthread_mutex_destroy(&table->death_mutex);
+        pthread_mutex_destroy(&table->start_mutex);
+        free(table);
+    }
+}
