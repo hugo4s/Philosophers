@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 10:01:43 by husamuel          #+#    #+#             */
-/*   Updated: 2024/12/18 11:32:03 by husamuel         ###   ########.fr       */
+/*   Updated: 2024/12/26 14:49:20 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	verify_number(char *s)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!s || !s[0])
@@ -56,36 +56,48 @@ int	ft_atoi(const char *str)
 	return (sign * result);
 }
 
-#include "philo.h"
-
-long get_current_time(void)
+long	get_current_time(void)
 {
-    struct timeval current_time;
-    
-    gettimeofday(&current_time, NULL);
-    return ((current_time.tv_sec * 1000) + (current_time.tv_usec / 1000));
+	struct timeval	current_time;
+
+	gettimeofday(&current_time, NULL);
+	return ((current_time.tv_sec * 1000) + (current_time.tv_usec / 1000));
 }
 
-void cleanup(t_table *table)
+void	cleanup(t_table *table)
 {
-    int i;
+	int	i;
 
-    if (table)
-    {
-        if (table->forks)
-        {
-            for (i = 0; i < table->philo_nbr; i++)
-                pthread_mutex_destroy(&table->forks[i].fork);
-            free(table->forks);
-        }
-        if (table->philos)
-        {
-            for (i = 0; i < table->philo_nbr; i++)
-                pthread_mutex_destroy(&table->philos[i].mutex);
-            free(table->philos);
-        }
-        pthread_mutex_destroy(&table->death_mutex);
-        pthread_mutex_destroy(&table->start_mutex);
-        free(table);
-    }
+	if (table)
+	{
+		if (table->forks)
+		{
+			i = table->philo_nbr;
+			while (i--)
+				pthread_mutex_destroy(&table->forks[i].fork);
+			free(table->forks);
+		}
+		if (table->philos)
+		{
+			i = table->philo_nbr;
+			while (i--)
+				pthread_mutex_destroy(&table->philos[i].mutex);
+			free(table->philos);
+		}
+		pthread_mutex_destroy(&table->death_mutex);
+		pthread_mutex_destroy(&table->start_mutex);
+		free(table);
+	}
+}
+
+int	clean_up_on_failure(t_table *table, int i)
+{
+	while (--i >= 0)
+	{
+		pthread_mutex_destroy(&table->forks[i].fork);
+		pthread_mutex_destroy(&table->philos[i].mutex);
+	}
+	free(table->forks);
+	free(table->philos);
+	return (0);
 }
