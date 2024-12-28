@@ -39,22 +39,18 @@ void eating(t_philo *philo)
 		release_forks(philo);
 		return;
 	}
-	pthread_mutex_lock(&philo->table->death_mutex);
 	philo->last_meal_time = get_current_time();
 	philo->meals_counter++;
 	
+	printf("\033[1;32m🍴 Philosopher %d is eating (%d meals)\033[0m\n", 
+		   philo->i, philo->meals_counter);
 	if (philo->nbr_limit_meals > 0 && 
 		philo->meals_counter >= philo->nbr_limit_meals)
 	{
-		pthread_mutex_unlock(&philo->table->death_mutex);
 		release_forks(philo);
 		return;
 	}
-	pthread_mutex_unlock(&philo->table->death_mutex);
-	
-	printf("\033[1;32m🍴 Philosopher %d is eating (%d meals)\033[0m\n", 
-		   philo->i, philo->meals_counter);
-		   
+
 	usleep(philo->time_to_eat * 1000);
 	
 	release_forks(philo);
@@ -85,7 +81,6 @@ void take_forks(t_philo *philo)
 		if (!check_death(philo))
 			printf("🍴 Philosopher %d took the left fork (%d)\n", 
 				   philo->i, philo->left_fork->fork_id);
-		// Espera até morrer
 		while (!check_death(philo))
 			usleep(1000);
 		pthread_mutex_unlock(&philo->left_fork->fork);

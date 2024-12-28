@@ -26,12 +26,11 @@ int check_philosopher_death(t_table *table, int i)
         table->someone_died = 1;
         printf("\033[1;31m☠️ Philosopher %d has died\033[0m\n", table->philos[i].i);
         pthread_mutex_unlock(&table->death_mutex);
-        return (1); // Indicates that a philosopher has died
+        return (1);
     }
     pthread_mutex_unlock(&table->death_mutex);
-    return (0); // No philosopher has died
+    return (0);
 }
-
 
 int check_all_philosophers_full(t_table *table)
 {
@@ -63,7 +62,7 @@ void *supervisor(void *arg)
         while (i < table->philo_nbr)
         {
             if (check_philosopher_death(table, i))
-                return (NULL); // Exit if a philosopher has died
+                return (NULL);
             i++;
         }
         if (table->nbr_limit_meals > 0 && check_all_philosophers_full(table))

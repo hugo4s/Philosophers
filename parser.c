@@ -48,21 +48,6 @@ int	initialize_table(t_table *table)
 		free(table->philos);
 		return (0);
 	}
-	if (pthread_mutex_init(&table->death_mutex, NULL) != 0)
-	{
-		free(table->forks);
-		free(table->philos);
-		return (0);
-	}
-	return (1);
-}
-
-int	initialize_philosopher_mutexes(t_table *table, int i)
-{
-	if (pthread_mutex_init(&table->forks[i].fork, NULL) != 0)
-		return (0);
-	table->forks[i].fork_id = i + 1;
-	table->forks[i].using = 0;
 	return (1);
 }
 
@@ -91,14 +76,11 @@ int	initialize_philosophers(t_table *table)
 	int		i;
 
 	start_time = get_current_time();
-	i = -1;
-	while (++i < table->philo_nbr)
+	i = 0;
+	while (i < table->philo_nbr)
 	{
-		if (!initialize_philosopher_mutexes(table, i))
-			return (clean_up_on_failure(table, i));
 		setup_philosopher_attributes(table, i, start_time);
-		if (pthread_mutex_init(&table->philos[i].mutex, NULL) != 0)
-			return (clean_up_on_failure(table, i));
+		i++;
 	}
 	return (1);
 }

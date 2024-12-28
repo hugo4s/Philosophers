@@ -17,8 +17,6 @@ void	*routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	pthread_mutex_lock(&philo->table->start_mutex);
-	pthread_mutex_unlock(&philo->table->start_mutex);
 	if (philo->philo_nbr == 1)
 	{
 		take_forks(philo);
@@ -53,7 +51,7 @@ int	main(int argc, char **argv)
 		cleanup(table);
 		return (1);
 	}
-	thread_monitorate(table);
+	thread_monitor(table);
 	cleanup(table);
 	return (0);
 }

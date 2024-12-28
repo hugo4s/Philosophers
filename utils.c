@@ -89,15 +89,3 @@ void	cleanup(t_table *table)
 		free(table);
 	}
 }
-
-int	clean_up_on_failure(t_table *table, int i)
-{
-	while (--i >= 0)
-	{
-		pthread_mutex_destroy(&table->forks[i].fork);
-		pthread_mutex_destroy(&table->philos[i].mutex);
-	}
-	free(table->forks);
-	free(table->philos);
-	return (0);
-}

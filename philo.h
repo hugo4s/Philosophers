@@ -82,11 +82,9 @@ int		initialize_philosopher_mutexes(t_table *table, int i);
 int		initialize_philosophers(t_table *table);
 void	setup_philosopher_attributes(t_table *table, int i, long start_time);
 int		check_death(t_philo *philo);
-int		clean_up_on_failure(t_table *table, int i);
-void thread_monitorate(t_table *table);
-void finalize_threads(t_table *table, pthread_t *thread_id, pthread_t supervisor_thread);
+void thread_monitor(t_table *table);
 void create_threads(t_table *table, pthread_t *thread_id, pthread_t *supervisor_thread);
 void initialize_resources(t_table *table, pthread_t **thread_id);
-
+void initialize_mutexs(t_table *table, pthread_t **thread_id);
 
 #endif
