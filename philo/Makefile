@@ -1,7 +1,7 @@
 NAME = philo
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -g
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)

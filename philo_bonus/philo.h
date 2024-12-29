@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 19:52:58 by husamuel          #+#    #+#             */
-/*   Updated: 2024/12/26 16:00:48 by husamuel         ###   ########.fr       */
+/*   Updated: 2024/12/29 10:28:19 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,30 @@
 
 # include <stdio.h>
 # include <unistd.h>
-# include <pthread.h>
+# include <semaphore.h>
 # include <stdlib.h>
 # include <stdbool.h>
 # include <sys/time.h>
 # include <limits.h>
+# include <signal.h>
+# include <sys/wait.h>
+#include <fcntl.h>
+
 
 typedef struct s_fork
 {
-	pthread_mutex_t	fork;
+	sem_t			fork;
 	int				fork_id;
 	int				using;
 }	t_fork;
 
 typedef struct s_philo
 {
-	struct s_table	*table;
-	pthread_mutex_t	mutex;
+	pid_t			pid;
 	t_fork			*left_fork;
 	t_fork			*right_fork;
 	t_fork			*forks;
+	struct s_table	*table;
 	long			last_meal_time;
 	int				i;
 	int				philo_nbr;
@@ -50,9 +54,7 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	pthread_mutex_t	death_mutex;
-	pthread_mutex_t	start_mutex;
-	pthread_mutex_t	print_mutex;
+	sem_t			death_sem;
 	int				philo_nbr;
 	int				time_to_die;
 	int				time_to_eat;
@@ -78,13 +80,11 @@ long	get_current_time(void);
 int		verify_number(char *s);
 int		parser_args(t_table *table, int ac, char **av);
 int		initialize_table(t_table *table);
-int		initialize_philosopher_mutexes(t_table *table, int i);
 int		initialize_philosophers(t_table *table);
 void	setup_philosopher_attributes(t_table *table, int i, long start_time);
 int		check_death(t_philo *philo);
-void thread_monitor(t_table *table);
-void create_threads(t_table *table, pthread_t *thread_id, pthread_t *supervisor_thread);
-void initialize_resources(t_table *table, pthread_t **thread_id);
-void initialize_mutexs(t_table *table, pthread_t **thread_id);
+void pid_monitor(t_table *table);
+void	create_pids(t_table *table, pid_t *pid);
+void	initialize_sem(t_table *table);
 
 #endif

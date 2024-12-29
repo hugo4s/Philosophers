@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 10:01:43 by husamuel          #+#    #+#             */
-/*   Updated: 2024/12/26 14:49:20 by husamuel         ###   ########.fr       */
+/*   Updated: 2024/12/29 10:07:07 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,28 +64,29 @@ long	get_current_time(void)
 	return ((current_time.tv_sec * 1000) + (current_time.tv_usec / 1000));
 }
 
-void	cleanup(t_table *table)
+void cleanup(t_table *table)
 {
-	int	i;
+    int i;
 
-	if (table)
-	{
-		if (table->forks)
-		{
-			i = table->philo_nbr;
-			while (i--)
-				pthread_mutex_destroy(&table->forks[i].fork);
-			free(table->forks);
-		}
-		if (table->philos)
-		{
-			i = table->philo_nbr;
-			while (i--)
-				pthread_mutex_destroy(&table->philos[i].mutex);
-			free(table->philos);
-		}
-		pthread_mutex_destroy(&table->death_mutex);
-		pthread_mutex_destroy(&table->start_mutex);
-		free(table);
-	}
+    if (table)
+    {
+        if (table->forks)
+        {
+            i = table->philo_nbr;
+            while (i--)
+                sem_close(&table->forks[i].fork);
+            free(table->forks);
+        }
+
+        if (table->philos)
+        {
+            i = table->philo_nbr;
+            while (i--)
+                kill(table->philos[i].pid, SIGTERM);
+        }
+        sem_close(&table->death_sem);
+        sem_unlink("/death_mutex");
+        free(table);
+    }
 }
+
