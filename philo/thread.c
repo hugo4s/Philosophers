@@ -62,4 +62,5 @@ void thread_monitor(t_table *table)
         return ;
 
     create_threads(table, thread, &supervisor_thread);
+    free(thread);
 }

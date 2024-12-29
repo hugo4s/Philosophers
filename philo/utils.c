@@ -73,18 +73,23 @@ void	cleanup(t_table *table)
 		if (table->forks)
 		{
 			i = table->philo_nbr;
-			while (i--)
+			while (i < table->philo_nbr)
+			{
 				pthread_mutex_destroy(&table->forks[i].fork);
+				i++;
+			}
 			free(table->forks);
 		}
 		if (table->philos)
 		{
 			i = table->philo_nbr;
-			while (i--)
+			while (i < table->philo_nbr)
+			{
 				pthread_mutex_destroy(&table->philos[i].mutex);
+				i++;
+			}
 			free(table->philos);
 		}
-		pthread_mutex_destroy(&table->death_mutex);
 		free(table);
 	}
 }

@@ -41,11 +41,12 @@ int	initialize_table(t_table *table)
 	table->someone_died = 0;
 	table->philos = malloc(sizeof(t_philo) * table->philo_nbr);
 	if (!table->philos)
+	{
 		return (0);
+	}
 	table->forks = malloc(sizeof(t_fork) * table->philo_nbr);
 	if (!table->forks)
 	{
-		free(table->philos);
 		return (0);
 	}
 	return (1);
