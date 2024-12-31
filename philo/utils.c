@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 10:01:43 by husamuel          #+#    #+#             */
-/*   Updated: 2024/12/28 21:02:36 by husamuel         ###   ########.fr       */
+/*   Updated: 2024/12/30 10:22:31 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	cleanup(t_table *table)
 	{
 		if (table->forks)
 		{
-			i = table->philo_nbr;
+			i = 0;
 			while (i < table->philo_nbr)
 			{
 				pthread_mutex_destroy(&table->forks[i].fork);
@@ -80,16 +80,13 @@ void	cleanup(t_table *table)
 			}
 			free(table->forks);
 		}
-		if (table->philos)
-		{
-			i = table->philo_nbr;
-			while (i < table->philo_nbr)
-			{
-				pthread_mutex_destroy(&table->philos[i].mutex);
-				i++;
-			}
-			free(table->philos);
-		}
+		free(table->philos);
 		free(table);
 	}
+}
+
+int	invalid_args(void)
+{
+	printf("Invalid arguments\n");
+	return (0);
 }

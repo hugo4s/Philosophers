@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:30:12 by husamuel          #+#    #+#             */
-/*   Updated: 2024/12/26 14:52:12 by husamuel         ###   ########.fr       */
+/*   Updated: 2024/12/30 10:26:03 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,39 +15,44 @@
 int	parser_args(t_table *table, int ac, char **av)
 {
 	if (ac != 5 && ac != 6)
-	{
-		printf("Wrong number of arguments\n");
-		return (0);
-	}
+		return (invalid_args());
 	table->philo_nbr = ft_atoi(av[1]);
 	table->time_to_die = ft_atoi(av[2]);
 	table->time_to_eat = ft_atoi(av[3]);
 	table->time_to_sleep = ft_atoi(av[4]);
 	if (ac == 6)
+	{
 		table->nbr_limit_meals = ft_atoi(av[5]);
+		if (table->nbr_limit_meals <= 0)
+			return (invalid_args());
+	}
 	else
 		table->nbr_limit_meals = 0;
 	if (table->philo_nbr <= 0 || table->time_to_die <= 0
 		|| table->time_to_eat <= 0 || table->time_to_sleep <= 0)
-	{
-		printf("Invalid arguments\n");
-		return (0);
-	}
+		return (invalid_args());
 	return (1);
 }
 
 int	initialize_table(t_table *table)
 {
+	int	i;
+
 	table->someone_died = 0;
 	table->philos = malloc(sizeof(t_philo) * table->philo_nbr);
 	if (!table->philos)
-	{
 		return (0);
-	}
 	table->forks = malloc(sizeof(t_fork) * table->philo_nbr);
 	if (!table->forks)
 	{
+		free(table->philos);
 		return (0);
+	}
+	i = 0;
+	while (i < table->philo_nbr)
+	{
+		pthread_mutex_init(&table->forks[i].fork, NULL);
+		i++;
 	}
 	return (1);
 }
