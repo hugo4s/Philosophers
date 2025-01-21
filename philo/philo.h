@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 19:52:58 by husamuel          #+#    #+#             */
-/*   Updated: 2024/12/30 10:22:40 by husamuel         ###   ########.fr       */
+/*   Updated: 2025/01/21 09:45:17 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int		verify_number(char *s);
 int		parser_args(t_table *table, int ac, char **av);
 int		initialize_table(t_table *table);
 int		initialize_philosophers(t_table *table);
-void	setup_philosopher_attributes(t_table *table, int i, long start_time);
+void	setup_philosopher(t_table *table, int i, long start_time);
 int		check_death(t_philo *philo);
 void	thread_monitor(t_table *table);
 void	create_threads(t_table *table,

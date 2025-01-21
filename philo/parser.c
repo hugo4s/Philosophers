@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:30:12 by husamuel          #+#    #+#             */
-/*   Updated: 2024/12/30 10:26:03 by husamuel         ###   ########.fr       */
+/*   Updated: 2025/01/21 09:57:07 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@ int	parser_args(t_table *table, int ac, char **av)
 
 int	initialize_table(t_table *table)
 {
-	int	i;
-
 	table->someone_died = 0;
 	table->philos = malloc(sizeof(t_philo) * table->philo_nbr);
 	if (!table->philos)
@@ -48,16 +46,10 @@ int	initialize_table(t_table *table)
 		free(table->philos);
 		return (0);
 	}
-	i = 0;
-	while (i < table->philo_nbr)
-	{
-		pthread_mutex_init(&table->forks[i].fork, NULL);
-		i++;
-	}
 	return (1);
 }
 
-void	setup_philosopher_attributes(t_table *table, int i, long start_time)
+void	setup_philosopher(t_table *table, int i, long start_time)
 {
 	table->philos[i].table = table;
 	table->philos[i].time_to_die = table->time_to_die;
@@ -85,7 +77,7 @@ int	initialize_philosophers(t_table *table)
 	i = 0;
 	while (i < table->philo_nbr)
 	{
-		setup_philosopher_attributes(table, i, start_time);
+		setup_philosopher(table, i, start_time);
 		i++;
 	}
 	return (1);
