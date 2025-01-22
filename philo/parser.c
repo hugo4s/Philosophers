@@ -6,7 +6,7 @@
 /*   By: husamuel <husamuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 11:30:12 by husamuel          #+#    #+#             */
-/*   Updated: 2025/01/21 09:57:07 by husamuel         ###   ########.fr       */
+/*   Updated: 2024/12/30 10:26:03 by husamuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	initialize_table(t_table *table)
 	return (1);
 }
 
-void	setup_philosopher(t_table *table, int i, long start_time)
+void	setup_philosopher_attributes(t_table *table, int i, long start_time)
 {
 	table->philos[i].table = table;
 	table->philos[i].time_to_die = table->time_to_die;
@@ -77,7 +77,7 @@ int	initialize_philosophers(t_table *table)
 	i = 0;
 	while (i < table->philo_nbr)
 	{
-		setup_philosopher(table, i, start_time);
+		setup_philosopher_attributes(table, i, start_time);
 		i++;
 	}
 	return (1);

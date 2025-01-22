@@ -12,32 +12,6 @@
 
 #include "philo.h"
 
-void	*routine(void *arg)
-{
-	t_philo	*philo;
-
-	philo = (t_philo *)arg;
-	if (philo->philo_nbr == 1)
-	{
-		one_philo_fork(philo);
-		return (NULL);
-	}
-	while (!check_death(philo))
-	{
-		if (philo->nbr_limit_meals > 0
-			&& philo->meals_counter >= philo->nbr_limit_meals)
-			break ;
-		eating(philo);
-		if (check_death(philo))
-			break ;
-		sleeping(philo);
-		if (check_death(philo))
-			break ;
-		thinking(philo);
-	}
-	return (NULL);
-}
-
 int	check_death(t_philo *philo)
 {
 	int		dead;
